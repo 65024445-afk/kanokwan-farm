@@ -1,0 +1,345 @@
+                                    <!-- INDEX HTML -->
+
+<!DOCTYPE html>
+    <html lang="th">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>กนกวรรณ&ศรีสุดาฟาร์ม</title>
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+
+    <div class="toast" id="toast"></div>
+
+    <!-- LOGIN -->
+    <div class="page login-page" id="page-auth" style="display:none;">
+
+        <div class="login-header">
+
+            <img src="http://10.0.2.2/kanokwan_farm/images/LOGOfarm.jpg"
+                 class="logo-img">
+
+            <h1>กนกวรรณ&ศรีสุดาฟาร์ม</h1>
+            <p>สดจากฟาร์ม ถึงมือคุณ</p>
+        </div>
+
+        <div class="login-card">
+
+            <h2 id="auth-title">เข้าสู่ระบบ</h2>
+
+            <div id="register-fields" style="display:none;">
+                <input type="text" id="reg-fname" placeholder="ชื่อ">
+                <input type="text" id="reg-lname" placeholder="นามสกุล">
+            </div>
+
+            <input type="email" id="auth-email" placeholder="อีเมล">
+            <input type="password" id="auth-password" placeholder="รหัสผ่าน">
+
+            <div id="register-fields2" style="display:none;">
+                <input type="password" id="reg-confirm" placeholder="ยืนยันรหัสผ่าน">
+                <input type="tel" id="reg-phone" placeholder="เบอร์โทร">
+                <textarea id="reg-address" placeholder="ที่อยู่"></textarea>
+            </div>
+
+            <button class="btn-login" onclick="handleAuth()">
+                เข้าสู่ระบบ
+            </button>
+
+            <div class="switch-link">
+                <span id="switch-text">ยังไม่มีบัญชี?</span>
+                <a onclick="toggleAuth()" id="switch-action">สมัครสมาชิก</a>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- MAIN APP -->
+    <div id="main-app">
+
+        <!-- HEADER -->
+        <div class="header">
+            <button class="back-btn-header" onclick="goBack()">
+                <span class="material-icons">arrow_back</span>
+            </button>
+
+            <h1 class="header-title">กนกวรรณ&ศรีสุดาฟาร์ม</h1>
+
+            <button class="cart-btn" onclick="showPage('cart', false, document.querySelectorAll('.nav-item')[1])">
+                <span class="material-icons">shopping_cart</span>
+                <span id="cart-badge" class="cart-badge">0</span>
+            </button>
+        </div>
+
+        <!-- HOME -->
+        <div class="page active" id="page-home">
+            <div class="search-bar">
+                <span class="material-icons">search</span>
+                <input type="text" placeholder="ค้นหาสินค้า..." oninput="searchProducts(this.value)">
+            </div>
+
+            <div class="banner">
+                <h2>สดจากฟาร์ม ถึงมือคุณ</h2>
+                <p>เนื้อหมู เนื้อไก่ ไข่ไก่ คัดพิเศษ</p>
+            </div>
+
+            <div class="section-title">ประเภทสินค้า</div>
+            <div class="categories" id="categories"></div>
+
+            <div class="section-title">สินค้าแนะนำ</div>
+            <div class="product-grid" id="product-grid"></div>
+        </div>
+
+        <div class="page" id="page-detail">
+
+            <div class="detail-img">
+                <img id="detail-img">
+            </div>
+
+            <div class="detail-body">
+                <div id="detail-name" class="detail-name"></div>
+                <div id="detail-price" class="detail-price"></div>
+                <div id="detail-desc" class="detail-desc"></div>
+                <div id="detail-stock" class="detail-stock"></div>
+
+                <div class="qty-control">
+                    <button class="qty-btn" onclick="changeQty(-1)">−</button>
+                    <span id="detail-qty" class="qty-num">1</span>
+                    <button class="qty-btn" onclick="changeQty(1)">+</button>
+                </div>
+            </div>
+
+            <button class="add-cart-btn" onclick="addToCart()">
+                เพิ่มลงตะกร้า
+            </button>
+        </div>
+
+        <!-- CART -->
+        <div class="page" id="page-cart">
+            <div id="cart-items"></div>
+            <div id="cart-footer"></div>
+        </div>
+
+        <!-- CHECKOUT -->
+        <div class="page" id="page-checkout">
+
+            <div class="checkout-address-box">
+                <label>ที่อยู่สำหรับจัดส่ง</label>
+                <textarea id="checkout-address" placeholder="กรอกที่อยู่"></textarea>
+            </div>
+
+            <h3 class="checkout-title">สรุปรายการคำสั่งซื้อ</h3>
+
+            <div id="checkout-items"></div>
+            <div id="checkout-summary"></div>
+
+            <button class="pay-btn" onclick="goToPayment()">
+                ยืนยันการสั่งซื้อ
+            </button>
+
+        </div>
+
+        <!-- PAYMENT / SLIP -->
+        <div class="page" id="page-payment">
+
+            <div class="payment-container">
+
+                <!-- กล่องบัญชี -->
+                <div class="bank-box">
+                    <div class="bank-icon">🏦</div>
+
+                    <div class="bank-name">ธนาคารไทยพาณิชย์</div>
+                    <div class="bank-number">123-456789-0</div>
+
+                    <div class="bank-owner">
+                        บริษัท กนกวรรณและศรีสุดาฟาร์ม จำกัด
+                    </div>
+
+                    <div class="qr-box">
+                        <img src="http://10.0.2.2/kanokwan_farm/images/QRpayment.jpg"
+                             style="width:100%; border-radius:10px;">
+                    </div>
+                </div>
+
+                <!-- ยอด -->
+                <div class="payment-amount">
+                    <span>ยอดที่ต้องชำระ</span>
+                    <h1 id="payment-total">฿0</h1>
+                </div>
+
+                <!-- อัปโหลดสลิป -->
+                <div class="upload-box" onclick="document.getElementById('slip-input').click()">
+
+                <span id="upload-text">
+                    กดเพื่ออัปโหลดหลักฐานการโอนเงิน (สลิป)
+                 </span>
+
+                    <img id="slip-preview" />
+
+                    <input type="file" id="slip-input" accept="image/*" hidden>
+                </div>
+                <button class="pay-btn" onclick="confirmPayment()">
+                    ยืนยันการชำระเงิน
+                </button>
+            </div>
+        </div>
+
+        <!-- แต้มสะสม -->
+        <div class="page" id="page-points">
+
+            <!-- คะแนน -->
+            <div class="points-card">
+                <p>แต้มสะสมของคุณ</p>
+                <h1 id="user-points">0</h1>
+                <span>แต้ม</span>
+            </div>
+
+            <!-- เงื่อนไข -->
+            <div class="points-section">
+                <h3>เงื่อนไขการสะสมแต้ม</h3>
+
+                <div class="condition-box">
+
+                    <div class="condition-item">
+                        <span class="material-icons">star</span>
+                        <span>ทุก 100 บาท = 1 แต้ม</span>
+                    </div>
+
+                    <div class="condition-item">
+                        <span class="material-icons">card_giftcard</span>
+                        <span>10 แต้ม = ส่วนลด 5 บาท</span>
+                    </div>
+
+                    <div class="condition-item">
+                        <span class="material-icons">schedule</span>
+                        <span>แต้มมีอายุ 1 ปีนับจากวันที่ได้รับ</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ประวัติ -->
+            <h3 class="history-title">ประวัติการใช้แต้ม</h3>
+            <div id="point-history">
+
+                <div class="no-history-box">
+                    <span class="material-icons">history</span>
+                    <p>ยังไม่มีประวัติการใช้แต้ม</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ORDERS -->
+        <div class="page" id="page-orders">
+            <div id="orders-list"></div>
+        </div>
+
+        <!-- PROFILE -->
+        <div class="page" id="page-profile">
+
+            <!-- HEADER -->
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <span class="material-icons">person</span>
+                </div>
+
+                <h2 id="profile-name">ชื่อผู้ใช้</h2>
+                <p id="profile-email">email@example.com</p>
+            </div>
+
+            <!-- MENU -->
+            <div class="profile-menu">
+
+                <div class="menu-item" onclick="showPage('orders')">
+                    <span class="material-icons">receipt_long</span>
+                    <span>ประวัติการสั่งซื้อ</span>
+                    <span class="material-icons arrow">chevron_right</span>
+                </div>
+
+                <div class="menu-item">
+                    <span class="material-icons">local_shipping</span>
+                    <span>ติดตามสถานะสินค้า</span>
+                    <span class="material-icons arrow">chevron_right</span>
+                </div>
+
+                <div class="menu-item" onclick="showPage('points')">
+                    <span class="material-icons">stars</span>
+                    <span>แต้มสะสม</span>
+                    <span class="material-icons arrow">chevron_right</span>
+                </div>
+
+                <div class="menu-item" onclick="showPage('edit-profile')">
+                    <span class="material-icons">person</span>
+                    <span>แก้ไขข้อมูลส่วนตัว</span>
+                    <span class="material-icons arrow">chevron_right</span>
+                </div>
+
+                <div class="menu-item logout" onclick="logout()">
+                    <span class="material-icons">logout</span>
+                    <span>ออกจากระบบ</span>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- EDIT PROFILE -->
+        <div class="page" id="page-edit-profile">
+            <input id="edit-fname">
+            <input id="edit-lname">
+            <input id="edit-phone">
+            <textarea id="edit-address"></textarea>
+            <button onclick="updateProfile()">บันทึก</button>
+        </div>
+
+        <!-- NAVBAR -->
+        <div class="bottom-nav">
+
+            <button class="nav-item active" onclick="showPage('home', false, this)">
+                <span class="material-icons">home</span>
+                หน้าแรก
+            </button>
+
+            <button class="nav-item" onclick="showPage('cart', false, this)">
+                <span class="material-icons">shopping_cart</span>
+                รถเข็น
+            </button>
+
+            <button class="nav-item" onclick="showPage('points', false, this)">
+                <span class="material-icons">stars</span>
+                แต้ม
+            </button>
+
+            <button class="nav-item" onclick="showPage('orders', false, this)">
+                <span class="material-icons">chat</span>
+                คำสั่งซื้อ
+            </button>
+
+            <button class="nav-item" onclick="showPage('profile', false, this)">
+                <span class="material-icons">person</span>
+                ฉัน
+            </button>
+        </div>
+
+        </div>
+
+        <script src="script.js"></script>
+
+        <div id="confirm-modal" class="modal">
+            <div class="modal-box">
+                <p id="confirm-text">คุณแน่ใจหรือไม่?</p>
+
+                <div class="modal-actions">
+                    <button class="btn-cancel" onclick="closeModal()">ยกเลิก</button>
+                    <button class="btn-ok" onclick="confirmDelete()">ลบ</button>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
